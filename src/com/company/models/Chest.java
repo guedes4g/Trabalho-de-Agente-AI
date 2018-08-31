@@ -1,21 +1,13 @@
 package com.company.models;
 
-public class Chest {
-    private Positon positon;
+import com.company.helpers.ElementType;
+
+public class Chest extends Element {
     private int capacity;
 
-
-    public Chest(Positon positon, int capacity) {
-        this.positon = positon;
+    public Chest(int x, int y, int capacity) {
+        super(x, y, ElementType.chest);
         this.capacity = capacity;
-    }
-
-    public Positon getPositon() {
-        return positon;
-    }
-
-    public void setPositon(Positon positon) {
-        this.positon = positon;
     }
 
     public int getCapacity() {

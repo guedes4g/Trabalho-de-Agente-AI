@@ -1,9 +1,12 @@
 package com.company.models;
 
-public class Bag {
+import com.company.helpers.ElementType;
+
+public class Bag extends Element{
     private int value;
 
-    public Bag(int value) {
+    public Bag(int x, int y, int value) {
+        super(x,y, ElementType.bag);
         this.value = value;
     }
 

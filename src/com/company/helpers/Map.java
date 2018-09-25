@@ -258,12 +258,12 @@ public class Map {
     }
 
     private boolean shouldFloadFill(int x, int y) {
-        if(!outOfRaster(x,y) && this.visited[x][y] !=true && ( this._map[x][y] == null || _map[x][y].getType() == ElementType.chest) )
+        if(!outOfBounds(x,y) && this.visited[x][y] !=true && ( this._map[x][y] == null || _map[x][y].getType() == ElementType.chest) )
             return true;
         return false;
     }
 
-    public boolean outOfRaster(int x, int y) {
+    public boolean outOfBounds(int x, int y) {
         if(x < 0 || y < 0 || x >= Config.MapX || y >= Config.MapY)
             return true;
         return false;
@@ -297,7 +297,7 @@ public class Map {
     }
 
     public Element getElementAt(int x, int y){
-        if(outOfRaster(x,y))
+        if(outOfBounds(x,y))
             return null;
         return this._map[x][y];
     }

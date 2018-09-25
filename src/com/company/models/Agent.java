@@ -84,6 +84,12 @@ public class Agent {
         }
     }
 
+    /**
+     * Filtra por tipo
+     * @param all
+     * @param type
+     * @return
+     */
     public ArrayList<Element> filterElementByType(ArrayList<Element> all, ElementType type){
         ArrayList<Element> result = new ArrayList<>();
         for (int i = 0; i < all.size(); i++) {
@@ -93,6 +99,9 @@ public class Agent {
         return result;
     }
 
+    /**
+     * OLHA AO REDOR
+     */
     public ArrayList<Element> lookAround(){
         ArrayList<Element> result = new ArrayList<>();
         for (int x = this.positon.getX()-2; x < this.positon.getX()+2; x++) {

@@ -31,7 +31,11 @@ public class Map {
     public static synchronized Map getInstance(){
         return INSTANCE;
     }
-    
+
+    public Positon getFreePosition() {
+        return  frontDoor;
+    }
+
     private boolean generateChest(int x, int y) {
         if(_map[x][y] == null && !frontDoor.equals(new Positon(x,y))) {
             _map[x][y] = new Chest(x,y);
@@ -39,7 +43,7 @@ public class Map {
         }
         return false;
     }
-    
+
     private void generateChests() {
         for(int i=0; i<4; i++) {
         boolean valido;
@@ -70,27 +74,43 @@ public class Map {
         }
         }
     }
-
     private void generateMap() {
         random = new Random();
         this.setDoorLocationAndWalls();
         //TODO put objects
         this.setFreeSpaces();
     }
+
     private void setFreeSpaces(){
         for (int x = 0; x < Config.MapX; x++)
             for (int y = 0; y < Config.MapY; y++)
                 if(_map[x][y] == null) _map[x][y] = new Element(x,y, ElementType.floor);
     }
-    
+
     private int[] generateElement() {
         while(true) {
             int x = random.nextInt(Config.MapX);
             int y = random.nextInt(Config.MapY);
-            if(_map[x][y] == null) {
+            if(_map[x][y] == null && !frontDoor.equals(new Positon(x,y)) && !holesAround(x,y)) {
                 return new int[] {x,y};
             }
         }
+    }
+
+    private boolean holesAround(int x, int y) {
+        if(!outOfBounds(x+1,y)){
+            if( getElementAt(x+1,y) != null && getElementAt(x+1,y).getType() == ElementType.hole) return true;
+        }
+        if(!outOfBounds(x-1,y)){
+            if( getElementAt(x-1,y) != null && getElementAt(x-1,y).getType() == ElementType.hole) return true;
+        }
+        if(!outOfBounds(x,y+1)){
+            if( getElementAt(x,y+1) != null && getElementAt(x,y+1).getType() == ElementType.hole) return true;
+        }
+        if(!outOfBounds(x,y-1)){
+            if( getElementAt(x,y-1) != null && getElementAt(x,y-1).getType() == ElementType.hole) return true;
+        }
+        return false;
     }
 
     private void setDoorLocationAndWalls() {
@@ -113,7 +133,7 @@ public class Map {
                 createDoor(random.nextInt(10), 9, false);
                 break;
         }
-        
+
 
         generateChests();
         // Place Walls
@@ -137,7 +157,7 @@ public class Map {
             int[] pos = generateElement();
             _map[pos[0]][pos[1]] = new Bag(pos[0],pos[1], Config.BAG_VALUES[i]);
         }
-        
+
         for(int i=0; i<Config.Holes; i++) {
             int[] pos = generateElement();
             _map[pos[0]][pos[1]] = new Hole(pos[0],pos[1]);
@@ -288,19 +308,19 @@ public class Map {
         if (x < 0 || y < 0 || x >= Config.MapX || y >= Config.MapY) {
             return null;
         }
-        
+
         Element e = getElementAt(x,y);
-        
+
         if(e != null && e.isWalkable())
             return e;
         return null;
     }
-
     public Element getElementAt(int x, int y){
         if(outOfBounds(x,y))
             return null;
         return this._map[x][y];
     }
+
     public Element getElementAt(Positon p){
         return getElementAt(p.getX(), p.getY());
     }
@@ -356,27 +376,41 @@ public class Map {
         StringBuilder str = new StringBuilder();
         for(int i = 0; i < this._map.length; i++){
             for(int j = 0; j < this._map[i].length; j++){
-                if(p.contains(new Positon(i,j))){
+                if(Agent.getInstance().getPositon().equals(new Positon(i,j))) {
+                    str.append('A');
+                } else if(p.contains(new Positon(i,j))){
                     str.append('*');
                 }
                 else
-                switch (_map[i][j].getType()){
-                    case floor:
-                        str.append('_');
-                        break;
-                    case hole:
-                        str.append('o');
-                        break;
-                    case wall:
-                        str.append('#');
-                        break;
-                    case door:
-                        str.append('D');
-                        break;
+                    switch (_map[i][j].getType()) {
+                        case floor:
+                            str.append('_');
+                            break;
+                        case hole:
+                            str.append('o');
+                            break;
+                        case wall:
+                            str.append('#');
+                            break;
+                        case door:
+                            str.append('D');
+                            break;
+                        case chest:
+                            str.append('c');
+                            break;
+                        case bag:
+                            str.append('B');
+                            break;
                 }
             }
             str.append('\n');
         }
         System.out.println(str.toString());
+    }
+
+    public Bag catchBag(Positon positon) {
+        Bag bg = (Bag) getElementAt(positon);
+        _map[positon.getX()][positon.getY()] = new Element(positon.getX(), positon.getY(), ElementType.floor);
+        return bg;
     }
 }

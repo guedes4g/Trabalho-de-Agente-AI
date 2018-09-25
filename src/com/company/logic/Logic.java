@@ -13,7 +13,13 @@ public class Logic {
     public void run(){
 
         Map map = Map.getInstance();
-        
+        Agent agent = Agent.getInstance();
+
+        agent.setPositon(
+                map.getFreePosition()
+        );
+        agent.start();
+
         System.out.println(map);
         /*Element start = map.getElementAt(2,2);
         Element end = map.getElementAt(7,7);

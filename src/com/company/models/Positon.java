@@ -11,6 +11,10 @@ public class Positon  {
         this.y = y;
     }
 
+    public Positon getPosition(){
+        return this;
+    }
+    
     public int getX() {
         return x;
     }
@@ -31,7 +35,7 @@ public class Positon  {
         return Math.abs(this.x - other.x) + Math.abs(this.y - other.y);
     }
 
-    public boolean isNextTo(Positon other) { return Math.abs(this.x - other.getX()) <= 1 && Math.abs(this.y - other.getY()) <=1; }
+    public boolean isNextTo(Positon other) { return manhattanDistance(other)<=1; }
 
     @Override
     public String toString() {

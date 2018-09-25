@@ -81,8 +81,8 @@ public class AStar {
                 totalPath.push(previous);
         }
 
-        //E já remove a última
-        totalPath.remove(to);
+//        //E já remove a última
+//        totalPath.remove(to);
 
         return totalPath;
     }

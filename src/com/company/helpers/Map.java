@@ -33,7 +33,7 @@ public class Map {
     }
     
     private boolean generateChest(int x, int y) {
-        if(_map[x][y] == null) {
+        if(_map[x][y] == null && !frontDoor.equals(new Positon(x,y))) {
             _map[x][y] = new Chest(x,y);
             return true;
         }
@@ -117,15 +117,7 @@ public class Map {
 
         generateChests();
         // Place Walls
-        
-        for (int i = 0; i < Config.MapX; i++) {
-            for (int j = 0; j < Config.MapY; j++) {
-                Element e = _map[i][j];
-                System.out.println("i: j: " + e != null ? e.toString() : "");
-            }
-        }
-        
-        System.exit(0);
+
 
         int x,y;
         boolean vertical;
@@ -140,8 +132,7 @@ public class Map {
             } while (this.willHaveConflict(x,y,vertical) || this.willGetStuck(x,y,vertical));
 
         }
-        System.out.println("6");
-        
+
         for(int i=0; i<Config.BAG_VALUES.length; i++) {
             int[] pos = generateElement();
             _map[pos[0]][pos[1]] = new Bag(pos[0],pos[1], Config.BAG_VALUES[i]);
@@ -151,7 +142,6 @@ public class Map {
             int[] pos = generateElement();
             _map[pos[0]][pos[1]] = new Hole(pos[0],pos[1]);
         }
-        
     }
 
     private void createDoor(int x,int y, boolean fixed){
@@ -245,7 +235,7 @@ public class Map {
         this.total = 0;
         for (int x = 0; x < this._map.length; x++) {
             for (int y = 0; y < this._map[x].length ; y++) {
-                if(_map[x][y] == null){
+                if(_map[x][y] == null || _map[x][y].getType() == ElementType.chest){
                     int v = _floodFill(x,y);
 
                     return this.total == this.freeSpace;
@@ -268,7 +258,7 @@ public class Map {
     }
 
     private boolean shouldFloadFill(int x, int y) {
-        if(!outOfRaster(x,y) && this.visited[x][y] !=true && this._map[x][y] == null )
+        if(!outOfRaster(x,y) && this.visited[x][y] !=true && ( this._map[x][y] == null || _map[x][y].getType() == ElementType.chest) )
             return true;
         return false;
     }
@@ -330,20 +320,30 @@ public class Map {
             for(int j = 0; j < this._map[i].length; j++){
                 if(Agent.getInstance().getPositon().equals(new Positon(i,j))) {
                     str.append('A');
-                } else
-                switch (_map[i][j].getType()){
-                    case floor:
-                        str.append('_');
-                        break;
-                    case hole:
-                        str.append('o');
-                        break;
-                    case wall:
-                        str.append('#');
-                        break;
-                    case door:
-                        str.append('D');
-                        break;
+                } else if(_map[i][j] == null) {
+                    str.append('_');
+                } else {
+                    switch (_map[i][j].getType()) {
+                        case floor:
+                            str.append('_');
+                            break;
+                        case hole:
+                            str.append('o');
+                            break;
+                        case wall:
+                            str.append('#');
+                            break;
+                        case door:
+                            str.append('D');
+                            break;
+                        case chest:
+                            str.append('c');
+                            break;
+                        case bag:
+                            str.append('B');
+                            break;
+
+                    }
                 }
             }
             str.append('\n');

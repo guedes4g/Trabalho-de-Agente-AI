@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Agent {
-    private static Agent INSTANCE;
+    private static Agent INSTANCE =  new Agent(new Positon(5,5));;
     private Map map;
     private Positon positon;
     //Memory
@@ -18,13 +18,9 @@ public class Agent {
     private Agent(Positon positon) {
         this.positon = positon;
         random = new Random();
+        map = Map.getInstance();
     }
 
-    public Agent genereateAgent(Positon positon){
-        this.INSTANCE = new Agent(positon);
-        map = Map.getInstance();
-        return INSTANCE;
-    }
     
     public void explore() {
         while(true) {

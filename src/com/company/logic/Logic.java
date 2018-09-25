@@ -11,6 +11,7 @@ import java.util.Stack;
 public class Logic {
 
     public void run(){
+
         Map map = Map.getInstance();
         
         System.out.println(map);

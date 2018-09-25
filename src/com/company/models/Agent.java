@@ -1,24 +1,70 @@
 package com.company.models;
 
+import com.company.Config;
+import com.company.helpers.ElementType;
+import com.company.helpers.Map;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Agent {
-    private Agent INSTANCE;
-
+    private static Agent INSTANCE;
+    private Map map;
     private Positon positon;
     //Memory
     private ArrayList<Chest> chests;
     private ArrayList<Bag> bags;
+    private Random random;
 
     private Agent(Positon positon) {
+        this.positon = positon;
+        random = new Random();
     }
 
     public Agent genereateAgent(Positon positon){
         this.INSTANCE = new Agent(positon);
+        map = Map.getInstance();
         return INSTANCE;
     }
+    
+    public void explore() {
+        while(true) {
+             switch(random.nextInt(4)) {
+                 case 0:
+                     if(positon.getX() != Config.MapX - 1 &&
+                             map.getElementAt(positon.getX() + 1, positon.getY()).getType() == ElementType.floor) {
+                         positon.setX(positon.getX() + 1);
+                         return;
+                     } else if(positon.getX() != Config.MapX - 1 &&
+                             map.getElementAt(positon.getX() + 1, positon.getY()).getType() == ElementType.hole) {
+                         
+                     }
+                     break;
+                 case 1:
+                     if(positon.getX() != 0 &&
+                             map.getElementAt(positon.getX() - 1, positon.getY()).getType() == ElementType.floor) {
+                         positon.setX(positon.getX() + 1);
+                         return;
+                     }
+                     break;
+                 case 2:
+                     if(positon.getY() != Config.MapY - 1 &&
+                             map.getElementAt(positon.getX(), positon.getY() + 1).getType() == ElementType.floor) {
+                         positon.setY(positon.getY() + 1);
+                         return;
+                     }
+                     break;
+                 case 3:
+                     if(positon.getY() != 0 &&
+                             map.getElementAt(positon.getX(), positon.getY() - 1).getType() == ElementType.floor) {
+                         positon.setY(positon.getY() - 1);
+                         return;
+                     }
+                     break;
+             }
+        }
+    }
 
-    public Agent getInstance(){
+    public static Agent getInstance(){
         return INSTANCE;
     }
 

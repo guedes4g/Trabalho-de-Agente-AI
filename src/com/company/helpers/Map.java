@@ -1,7 +1,11 @@
 package com.company.helpers;
 
 import com.company.Config;
+import com.company.models.Agent;
+import com.company.models.Bag;
+import com.company.models.Chest;
 import com.company.models.Element;
+import com.company.models.Hole;
 import com.company.models.Positon;
 
 import java.util.ArrayList;
@@ -17,6 +21,8 @@ public class Map {
     private Positon frontDoor;
     private boolean visited[][];
     private int total;
+    private Random random;
+    private int doorPlacement;
 
     private Map(){
         this.generateMap();
@@ -25,11 +31,50 @@ public class Map {
     public static synchronized Map getInstance(){
         return INSTANCE;
     }
+    
+    private boolean generateChest(int x, int y) {
+        if(_map[x][y] == null) {
+            _map[x][y] = new Chest(x,y);
+            return true;
+        }
+        return false;
+    }
+    
+    private void generateChests() {
+        for(int i=0; i<4; i++) {
+        boolean valido;
+        switch (doorPlacement){
+            case 0:
+                do {
+                    valido = generateChest(1, random.nextInt(10));
+                } while(!valido);
+                break;
+
+            case 1:
+                do {
+                    valido = generateChest(8, random.nextInt(10));
+                } while(!valido);
+                break;
+
+            case 2:
+                do {
+                    valido = generateChest(random.nextInt(10), 1);
+                } while(!valido);
+                break;
+
+            case 3:
+                do {
+                    valido = generateChest(random.nextInt(10), 8);
+                } while(!valido);
+                break;
+        }
+        }
+    }
 
     private void generateMap() {
+        random = new Random();
         this.setDoorLocationAndWalls();
         //TODO put objects
-
         this.setFreeSpaces();
     }
     private void setFreeSpaces(){
@@ -37,11 +82,20 @@ public class Map {
             for (int y = 0; y < Config.MapY; y++)
                 if(_map[x][y] == null) _map[x][y] = new Element(x,y, ElementType.floor);
     }
+    
+    private int[] generateElement() {
+        while(true) {
+            int x = random.nextInt(Config.MapX);
+            int y = random.nextInt(Config.MapY);
+            if(_map[x][y] == null) {
+                return new int[] {x,y};
+            }
+        }
+    }
 
     private void setDoorLocationAndWalls() {
-        Random random = new Random();
         //Place Door
-        int doorPlacement = random.nextInt(4);
+        doorPlacement = random.nextInt(4);
         switch (doorPlacement){
             case 0:
                 createDoor(0, random.nextInt(10), true);
@@ -59,8 +113,19 @@ public class Map {
                 createDoor(random.nextInt(10), 9, false);
                 break;
         }
+        
 
+        generateChests();
         // Place Walls
+        
+        for (int i = 0; i < Config.MapX; i++) {
+            for (int j = 0; j < Config.MapY; j++) {
+                Element e = _map[i][j];
+                System.out.println("i: j: " + e != null ? e.toString() : "");
+            }
+        }
+        
+        System.exit(0);
 
         int x,y;
         boolean vertical;
@@ -75,6 +140,18 @@ public class Map {
             } while (this.willHaveConflict(x,y,vertical) || this.willGetStuck(x,y,vertical));
 
         }
+        System.out.println("6");
+        
+        for(int i=0; i<Config.BAG_VALUES.length; i++) {
+            int[] pos = generateElement();
+            _map[pos[0]][pos[1]] = new Bag(pos[0],pos[1], Config.BAG_VALUES[i]);
+        }
+        
+        for(int i=0; i<Config.Holes; i++) {
+            int[] pos = generateElement();
+            _map[pos[0]][pos[1]] = new Hole(pos[0],pos[1]);
+        }
+        
     }
 
     private void createDoor(int x,int y, boolean fixed){
@@ -218,7 +295,12 @@ public class Map {
     }
 
     public Element getWalkableElementAt(int x, int y){
+        if (x < 0 || y < 0 || x >= Config.MapX || y >= Config.MapY) {
+            return null;
+        }
+        
         Element e = getElementAt(x,y);
+        
         if(e != null && e.isWalkable())
             return e;
         return null;
@@ -246,6 +328,9 @@ public class Map {
         StringBuilder str = new StringBuilder();
         for(int i = 0; i < this._map.length; i++){
             for(int j = 0; j < this._map[i].length; j++){
+                if(Agent.getInstance().getPositon().equals(new Positon(i,j))) {
+                    str.append('A');
+                } else
                 switch (_map[i][j].getType()){
                     case floor:
                         str.append('_');

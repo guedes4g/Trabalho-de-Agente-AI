@@ -5,9 +5,9 @@ import com.company.helpers.ElementType;
 public class Chest extends Element {
     private int capacity;
 
-    public Chest(int x, int y, int capacity) {
+    public Chest(int x, int y) {
         super(x, y, ElementType.chest);
-        this.capacity = capacity;
+        this.capacity = 0;
     }
 
     public int getCapacity() {

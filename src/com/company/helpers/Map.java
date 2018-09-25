@@ -311,7 +311,7 @@ public class Map {
 
         Element e = getElementAt(x,y);
 
-        if(e != null && e.isWalkable())
+        if(e != null && e.isWalkableOrHole())
             return e;
         return null;
     }
@@ -339,9 +339,9 @@ public class Map {
         for(int i = 0; i < this._map.length; i++){
             for(int j = 0; j < this._map[i].length; j++){
                 if(Agent.getInstance().getPositon().equals(new Positon(i,j))) {
-                    str.append('A');
+                    str.append("A ");
                 } else if(_map[i][j] == null) {
-                    str.append('_');
+                    str.append("_ ");
                 } else {
                     switch (_map[i][j].getType()) {
                         case floor:
@@ -364,6 +364,7 @@ public class Map {
                             break;
 
                     }
+                    str.append(' ');
                 }
             }
             str.append('\n');
@@ -377,9 +378,9 @@ public class Map {
         for(int i = 0; i < this._map.length; i++){
             for(int j = 0; j < this._map[i].length; j++){
                 if(Agent.getInstance().getPositon().equals(new Positon(i,j))) {
-                    str.append('A');
+                    str.append("A ");
                 } else if(p.contains(new Positon(i,j))){
-                    str.append('*');
+                    str.append("* ");
                 }
                 else
                     switch (_map[i][j].getType()) {
@@ -402,6 +403,7 @@ public class Map {
                             str.append('B');
                             break;
                 }
+                str.append(' ');
             }
             str.append('\n');
         }

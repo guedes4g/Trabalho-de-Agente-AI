@@ -53,7 +53,8 @@ public class AStar {
                 path.put(pos, current);
                 g.put(pos, gscore);
 
-                fscore = g.get(pos) + pos.manhattanDistance(to);
+                fscore = g.get(pos) +
+                        pos.manhattanDistance(to);
                 f.put(pos, fscore);
 
                 open.sort((l,r)->{
@@ -81,7 +82,6 @@ public class AStar {
                 totalPath.push(previous);
         }
 
-//        //E já remove a última
 //        totalPath.remove(to);
 
         return totalPath;
@@ -99,12 +99,16 @@ public class AStar {
 
     private static void addAt(Positon p, int dx, int dy ,List<Positon> result, Map map) {
         Element e = map.getWalkableElementAt(p.getX()+dx,p.getY()+dy);
-        if(e != null)
-            //pula
-            if(e.getType() == ElementType.hole)
-                addAt(p, dx*2, dy*2, result, map);
-            else
-                result.add(e);
+
+        //pula
+        if (e != null && e.getType() == ElementType.hole) {
+            System.out.println("Astart**** " + p.getX()+ " + " + dx * 2 + " ;;;; " +p.getY() +" + "+ dy * 2);
+            e = map.getWalkableElementAt(p.getX() + dx * 2, p.getY() + dy * 2);
+        }
+
+        if(e != null) {
+            result.add(e);
+        }
     }
 
 

@@ -34,11 +34,11 @@ public class Agent {
     public void start(){
 
         while (true){
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
             System.out.println(map);
             if(Config.DEBUG) System.out.println("Estado " + estado.toString());
 
@@ -84,14 +84,17 @@ public class Agent {
      */
     private void goGetBag(Bag element) {
         Stack<Positon> path = AStar.run(map.getElementAt(positon), element);
-        for (int i = 0; i < path.size(); i++) {
+        System.out.println(path);
+        System.out.println(path.size());
+        int size =  path.size();
+        if(Config.DEBUG) map.printWithPath(path);
+        for (int i = 0; i < size ; i++) {
             positon = path.pop();
             if(Config.DEBUG) System.out.println("A* to " + positon);
             System.out.println(map);
         }
         bags.add(
                 map.catchBag(element.getPosition()));
-        if(Config.DEBUG) map.printWithPath(path);
     }
 
     /**

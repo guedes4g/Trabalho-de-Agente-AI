@@ -2,7 +2,7 @@ package com.company.models;
 
 import com.company.helpers.ElementType;
 
-public class Element extends Positon {
+public class Element extends Position {
     private ElementType type;
 
     public Element(int x, int y, ElementType type ){

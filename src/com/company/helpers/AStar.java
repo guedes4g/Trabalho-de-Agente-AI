@@ -1,18 +1,18 @@
 package com.company.helpers;
 
 import com.company.models.Element;
-import com.company.models.Positon;
+import com.company.models.Position;
 
 import java.util.*;
 
 public class AStar {
 
-    public static Stack<Positon> run(Element start, Element to){
-        ArrayList<Positon> open = new ArrayList<>();
-        Set<Positon> closed = new HashSet<>();
-        HashMap<Positon, Integer> g = new HashMap<>();
-        HashMap<Positon, Integer> f = new HashMap<>();
-        HashMap<Positon, Positon> path = new HashMap<>();
+    public static Stack<Position> run(Element start, Element to){
+        ArrayList<Position> open = new ArrayList<>();
+        Set<Position> closed = new HashSet<>();
+        HashMap<Position, Integer> g = new HashMap<>();
+        HashMap<Position, Integer> f = new HashMap<>();
+        HashMap<Position, Position> path = new HashMap<>();
 
         Map map = Map.getInstance();
 
@@ -23,7 +23,7 @@ public class AStar {
         g.put(start, 0);
         f.put(start, start.manhattanDistance(to));
 
-        Positon current = null;
+        Position current = null;
 
         while(!open.isEmpty()){
 
@@ -31,13 +31,13 @@ public class AStar {
 
             if(current.isNextTo(to)){
                 path.put(to, current);
-                return buildPath(path, to);
+                return buildPath(path, to, map);
             }
             open.remove(0);
             closed.add(current);
 
 
-            for(Positon pos : lookAround(map, current)){
+            for(Position pos : lookAround(map, current)){
 
                 if(closed.contains(pos)) continue;
 
@@ -69,26 +69,34 @@ public class AStar {
         return null;
     }
 
-    private static Stack<Positon> buildPath(HashMap<Positon, Positon> path, Element to){
-        Stack<Positon> totalPath = new Stack<>();
+    private static Stack<Position> buildPath(HashMap<Position, Position> path, Element to, Map map){
+        ArrayList<Position> totalPath = new ArrayList<>();
+        Stack<Position> result = new Stack<>();
+        Position current = to;
 
-        Positon current = to;
 
-        while (current != null) {
-            Positon previous = current;
+        int debug = 0;
+        while (current != null && current != path.get(current)) {
+            debug++;
+            Position previous = current;
             current = path.get(current);
-
-            if (current != null)
-                totalPath.push(previous);
+            if (current != null){
+                 totalPath.add(previous);
+            }
+            if(debug >100){
+                System.out.println("HERE");
+            }
+        }
+        for(int p = 0; p < totalPath.size(); p++){
+            if(map.getElementAt(totalPath.get(p)).getType() == ElementType.hole) continue;
+            result.push(totalPath.get(p));
         }
 
-//        totalPath.remove(to);
-
-        return totalPath;
+        return result;
     }
 
-    private static List<Positon> lookAround(Map map, Positon current){
-        List<Positon> result = new ArrayList<>();
+    private static List<Position> lookAround(Map map, Position current){
+        List<Position> result = new ArrayList<>();
 
         addAt(current, 1,0, result, map);
         addAt(current, -1,0, result, map);
@@ -97,14 +105,9 @@ public class AStar {
         return result;
     }
 
-    private static void addAt(Positon p, int dx, int dy ,List<Positon> result, Map map) {
-        Element e = map.getWalkableElementAt(p.getX()+dx,p.getY()+dy);
+    private static void addAt(Position p, int dx, int dy , List<Position> result, Map map) {
+        Element e = map.getWalkableElementAt(p.getX()+dx,p.getY()+dy); // returns hole as well
 
-        //pula
-        if (e != null && e.getType() == ElementType.hole) {
-            System.out.println("Astart**** " + p.getX()+ " + " + dx * 2 + " ;;;; " +p.getY() +" + "+ dy * 2);
-            e = map.getWalkableElementAt(p.getX() + dx * 2, p.getY() + dy * 2);
-        }
 
         if(e != null) {
             result.add(e);

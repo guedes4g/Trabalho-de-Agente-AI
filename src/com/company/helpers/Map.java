@@ -1,12 +1,8 @@
 package com.company.helpers;
 
 import com.company.Config;
-import com.company.models.Agent;
-import com.company.models.Bag;
-import com.company.models.Chest;
-import com.company.models.Element;
-import com.company.models.Hole;
-import com.company.models.Positon;
+import com.company.models.*;
+import com.company.models.Position;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +14,7 @@ public class Map {
     private Element _map[][] = new Element[Config.MapX][Config.MapY];
     private int freeSpace = Config.MapX * Config.MapY;
     private boolean doorClosed = true;
-    private Positon frontDoor;
+    private Position frontDoor;
     private boolean visited[][];
     private int total;
     private Random random;
@@ -32,12 +28,18 @@ public class Map {
         return INSTANCE;
     }
 
-    public Positon getFreePosition() {
-        return  frontDoor;
+    public Position getFreePosition() {
+        Element e;
+        while(true){
+            e = getElementAt(random.nextInt(Config.MapY), random.nextInt(Config.MapY));
+            if(e != null && e.isWalkable()){
+                return e.getPosition();
+            }
+        }
     }
 
     private boolean generateChest(int x, int y) {
-        if(_map[x][y] == null && !frontDoor.equals(new Positon(x,y))) {
+        if(_map[x][y] == null && !frontDoor.equals(new Position(x,y))) {
             _map[x][y] = new Chest(x,y);
             return true;
         }
@@ -91,7 +93,7 @@ public class Map {
         while(true) {
             int x = random.nextInt(Config.MapX);
             int y = random.nextInt(Config.MapY);
-            if(_map[x][y] == null && !frontDoor.equals(new Positon(x,y)) && !holesAround(x,y)) {
+            if(_map[x][y] == null && !frontDoor.equals(new Position(x,y)) && !holesAround(x,y)) {
                 return new int[] {x,y};
             }
         }
@@ -181,9 +183,9 @@ public class Map {
 
         //Keep track of the element in front of the door
         if(!fixed)
-            this.frontDoor = new Positon(x  , y == Config.MapY -1 ? y - 1 : 1);
+            this.frontDoor = new Position(x  , y == Config.MapY -1 ? y - 1 : 1);
         else
-            this.frontDoor = new Positon(x == Config.MapX -1 ? x - 1 : 1 ,  y);
+            this.frontDoor = new Position(x == Config.MapX -1 ? x - 1 : 1 ,  y);
 
     }
 
@@ -321,7 +323,7 @@ public class Map {
         return this._map[x][y];
     }
 
-    public Element getElementAt(Positon p){
+    public Element getElementAt(Position p){
         return getElementAt(p.getX(), p.getY());
     }
 
@@ -338,7 +340,7 @@ public class Map {
         StringBuilder str = new StringBuilder();
         for(int i = 0; i < this._map.length; i++){
             for(int j = 0; j < this._map[i].length; j++){
-                if(Agent.getInstance().getPositon().equals(new Positon(i,j))) {
+                if(Agent.getInstance().getPosition().equals(new Position(i,j))) {
                     str.append("A ");
                 } else if(_map[i][j] == null) {
                     str.append("_ ");
@@ -354,7 +356,11 @@ public class Map {
                             str.append('#');
                             break;
                         case door:
-                            str.append('D');
+                            if (this.doorClosed) {
+                                str.append('D');
+                            } else {
+                                str.append(']');
+                            }
                             break;
                         case chest:
                             str.append('c');
@@ -372,15 +378,15 @@ public class Map {
         return str.toString();
     }
 
-    public void printWithPath(Stack<Positon> g){
-        ArrayList<Positon> p = new ArrayList<>(g);
+    public void printWithPath(Stack<Position> g){
+        ArrayList<Position> p = new ArrayList<>(g);
         StringBuilder str = new StringBuilder();
         for(int i = 0; i < this._map.length; i++){
             for(int j = 0; j < this._map[i].length; j++){
-                if(Agent.getInstance().getPositon().equals(new Positon(i,j))) {
+                if(Agent.getInstance().getPosition().equals(new Position(i,j))) {
                     str.append("A ");
-                } else if(p.contains(new Positon(i,j))){
-                    str.append("* ");
+                } else if(p.contains(new Position(i,j))){
+                    str.append("*");
                 }
                 else
                     switch (_map[i][j].getType()) {
@@ -394,7 +400,11 @@ public class Map {
                             str.append('#');
                             break;
                         case door:
-                            str.append('D');
+                            if (this.doorClosed) {
+                                str.append('D');
+                            } else {
+                                str.append(']');
+                            }
                             break;
                         case chest:
                             str.append('c');
@@ -410,9 +420,13 @@ public class Map {
         System.out.println(str.toString());
     }
 
-    public Bag catchBag(Positon positon) {
-        Bag bg = (Bag) getElementAt(positon);
-        _map[positon.getX()][positon.getY()] = new Element(positon.getX(), positon.getY(), ElementType.floor);
+    public Bag catchBag(Position position) {
+        Bag bg = (Bag) getElementAt(position);
+        _map[position.getX()][position.getY()] = new Element(position.getX(), position.getY(), ElementType.floor);
         return bg;
+    }
+
+    public void openDoor() {
+        this.doorClosed = false;
     }
 }

@@ -13,6 +13,7 @@ public class Config {
 
     //MAP OBJECTS
     public static int Holes = 5;
+    public static int Chests= 4;
     public static int NumberOfWalls = 4;
     public static int WallSize = 5;
     public static int[] BAG_VALUES = {5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5};

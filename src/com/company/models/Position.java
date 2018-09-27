@@ -2,16 +2,16 @@ package com.company.models;
 
 import java.util.Objects;
 
-public class Positon  {
+public class Position {
     private int x;
     private int y;
 
-    public Positon(int x, int y) {
+    public Position(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    public Positon getPosition(){
+    public Position getPosition(){
         return this;
     }
     
@@ -31,11 +31,11 @@ public class Positon  {
         this.y = y;
     }
 
-    public int manhattanDistance(Positon other){
+    public int manhattanDistance(Position other){
         return Math.abs(this.x - other.x) + Math.abs(this.y - other.y);
     }
 
-    public boolean isNextTo(Positon other) { return manhattanDistance(other)<=1; }
+    public boolean isNextTo(Position other) { return manhattanDistance(other)<=1; }
 
     @Override
     public String toString() {
@@ -45,10 +45,10 @@ public class Positon  {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Positon)) return false;
-        Positon positon = (Positon) o;
-        return getX() == positon.getX() &&
-                getY() == positon.getY();
+        if (!(o instanceof Position)) return false;
+        Position position = (Position) o;
+        return getX() == position.getX() &&
+                getY() == position.getY();
     }
 
     @Override

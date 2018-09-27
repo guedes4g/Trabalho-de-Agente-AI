@@ -166,16 +166,6 @@ public class Agent {
      * @param element
      */
     private void goGetBag(Bag element) {
-//        Stack<Position> path = AStar.run(map.getElementAt(position), element);
-//        System.out.println(path);
-//        System.out.println(path.size());
-//        int size =  path.size();
-//        if(Config.DEBUG) map.printWithPath(path);
-//        for (int i = 0; i < size ; i++) {
-//            position = path.pop();
-//            if(Config.DEBUG) System.out.println("A* to " + position);
-//            System.out.println(map);
-//        }
         moveWithAStar(element.getPosition(),0);
         bags.add(map.catchBag(element.getPosition()));
     }

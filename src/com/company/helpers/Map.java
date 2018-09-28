@@ -78,8 +78,11 @@ public class Map {
     }
     private void generateMap() {
         random = new Random();
-        this.setDoorLocationAndWalls();
-        //TODO put objects
+        try {
+            this.setDoorLocationAndWalls();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         this.setFreeSpaces();
     }
 
@@ -115,7 +118,7 @@ public class Map {
         return false;
     }
 
-    private void setDoorLocationAndWalls() {
+    private void setDoorLocationAndWalls() throws Exception {
         //Place Door
         doorPlacement = random.nextInt(4);
         switch (doorPlacement){
@@ -154,15 +157,14 @@ public class Map {
             } while (this.willHaveConflict(x,y,vertical) || this.willGetStuck(x,y,vertical));
 
         }
+        for(int i=0; i<Config.Holes; i++) {
+            int[] pos = generateElement();
+            this.addElement(pos[0],pos[1],new Hole(pos[0],pos[1]));
 
+        }
         for(int i=0; i<Config.BAG_VALUES.length; i++) {
             int[] pos = generateElement();
             _map[pos[0]][pos[1]] = new Bag(pos[0],pos[1], Config.BAG_VALUES[i]);
-        }
-
-        for(int i=0; i<Config.Holes; i++) {
-            int[] pos = generateElement();
-            _map[pos[0]][pos[1]] = new Hole(pos[0],pos[1]);
         }
     }
 
@@ -195,7 +197,10 @@ public class Map {
     }
 
     private void addElement(int x,int y,ElementType type){
-        this._map[x][y] = new Element(x,y,type);
+        addElement(x,y, new Element(x,y,type));
+    }
+    private void addElement(int x,int y,Element e){
+        this._map[x][y] = e;
         this.freeSpace --;
     }
 
@@ -324,8 +329,11 @@ public class Map {
     }
 
     public Element getElementAt(Position p){
-        return getElementAt(p.getX(), p.getY());
+        if(p != null)
+            return getElementAt(p.getX(), p.getY());
+        else return null;
     }
+
 
     public boolean isDoorClosed() {
         return doorClosed;
@@ -384,7 +392,7 @@ public class Map {
         for(int i = 0; i < this._map.length; i++){
             for(int j = 0; j < this._map[i].length; j++){
                 if(Agent.getInstance().getPosition().equals(new Position(i,j))) {
-                    str.append("A ");
+                    str.append("A");
                 } else if(p.contains(new Position(i,j))){
                     str.append("*");
                 }

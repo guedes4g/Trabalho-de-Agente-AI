@@ -5,7 +5,6 @@ import com.company.helpers.AStar;
 import com.company.helpers.ElementType;
 import com.company.helpers.Genetic;
 import com.company.helpers.Map;
-import javafx.geometry.Pos;
 
 import java.util.*;
 
@@ -37,7 +36,7 @@ public class Agent {
 
         while (true){
 //            try {
-//                Thread.sleep(1000);
+//                Thread.sleep(500);
 //            } catch (InterruptedException e) {
 //                e.printStackTrace();
 //            }
@@ -66,6 +65,7 @@ public class Agent {
                     break;
 
                 case SAINDO_SALA:
+                    System.out.println(this.doorPosition);
                     exit();
                     break;
                 case FIM:
@@ -135,6 +135,10 @@ public class Agent {
         if(Config.DEBUG) map.printWithPath(path);
         for (int i = 0; i < size - offset ; i++) {
             position = path.pop();
+            if(i == (size-2 - offset)&& map.getElementAt(position).getType() == ElementType.bag){
+                System.out.println(map.getElementAt(position).getType());
+                bags.add(map.catchBag(position));
+            }
             if(Config.DEBUG) System.out.println("A* to " + position);
             System.out.println(map);
         }
@@ -145,7 +149,7 @@ public class Agent {
     }
 
     private boolean hasAllChests() {
-        return this.chests.size() == Config.Chests;
+        return this.chests.size() == Config.NumberOfChests;
     }
 
     private void lookForChests(ArrayList<Element> surrounding) {
@@ -179,7 +183,7 @@ public class Agent {
             lookForChests(surrounding);
             explore();
         } else {
-            this.estado = Estado.SAINDO_SALA;
+            this.estado = Estado.DISTRIBUI_MOEDAS;
         }
     }
 

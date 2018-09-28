@@ -3,14 +3,15 @@ package com.company.helpers;
 import java.util.List;
 import java.util.Random;
 
+import com.company.Config;
 import com.company.models.Bag;
 
 public class Genetic {
 	
 	private static final Random RANDOM = new Random();
-	private static final int NUMBER_OF_CHESTS = 4;
+	private static final int NUMBER_OF_CHESTS = Config.NumberOfChests;
 	private static final int POPULATION_SIZE = 5;
-	private static final int MUTATION_PROBABILITY = 10;
+	private static final int MUTATION_PROBABILITY = 5;
 	
 	public static int[] solution(List<Bag> bags) {
 		int numberOfBags = bags.size();

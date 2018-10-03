@@ -13,7 +13,7 @@ public class Agent {
     private Map map;
     private Position position;
     private Estado estado;
-
+    private int pontuacao;
 
     //Memory
     private Position doorPosition;
@@ -25,16 +25,25 @@ public class Agent {
         this.position = position;
         //ESTADO INICIAL
         this.estado = Estado.PROCURA_MOEDAS;
-
+        pontuacao = 0;
         random = new Random();
         map = Map.getInstance();
         bags = new ArrayList<>();
         chests = new HashSet<>();
     }
 
+    public void addPoints(int p) {
+        pontuacao += p;
+    }
+
+    public int getPontuacao(){
+        return this.pontuacao;
+    }
+
     public void start(){
 
         while (true){
+            /*EXECUTAR DE FORMA MAIS LENTA*/
 //            try {
 //                Thread.sleep(500);
 //            } catch (InterruptedException e) {
@@ -171,6 +180,7 @@ public class Agent {
      */
     private void goGetBag(Bag element) {
         moveWithAStar(element.getPosition(),0);
+        addPoints( element.getValue() * Config.Point_Coin );
         bags.add(map.catchBag(element.getPosition()));
     }
 
@@ -203,6 +213,8 @@ public class Agent {
             this.estado = Estado.PROCURA_PORTA;
         else
             this.estado = Estado.SAINDO_SALA;
+
+        addPoints(Config.Point_Door);
     }
 
     private void addCoinsToChest(Chest chest, ArrayList<Bag> bags) {
@@ -235,6 +247,7 @@ public class Agent {
         map.openDoor();
         System.out.println(map);
         this.exitMap();
+        addPoints(Config.Point_Exit);
         this.estado = Estado.FIM;
     }
 
@@ -265,6 +278,7 @@ public class Agent {
                                 map.getElementAt(position.getX() + 2, position.getY()).isWalkable()) {
                             position.setX(position.getX() + 2);
                             if(Config.DEBUG) System.out.println("Jumped" + ( position.getX() + 2) + " - " +  position.getY());
+                            addPoints(Config.Point_Jump);
                             return;
                         }
                     }
@@ -284,6 +298,7 @@ public class Agent {
                                 map.getElementAt(position.getX() -2, position.getY()).isWalkable()){
                             if(Config.DEBUG) System.out.println("Jumped" + ( position.getX() -2) + " - " +  position.getY());
                             position.setX(position.getX() - 2);
+                            addPoints(Config.Point_Jump);
                             return;
                         }
                     }
@@ -303,6 +318,7 @@ public class Agent {
                                 map.getElementAt(position.getX() , position.getY()+2).isWalkable()){
                             if(Config.DEBUG) System.out.println("Jumped" + ( position.getX() + 1) + " - " +  ( position.getY() + 2));
                             position.setY(position.getY() + 2);
+                            addPoints(Config.Point_Jump);
                             return;
                         }
                     }
@@ -323,6 +339,7 @@ public class Agent {
                                 map.getElementAt(position.getX() , position.getY()-2).isWalkable()){
                             if(Config.DEBUG) System.out.println("Jumped" + ( position.getX() + 1) + " - " +  ( position.getY() - 2));
                             position.setY(position.getY() - 2);
+                            addPoints(Config.Point_Jump);
                             return;
                         }
                     }

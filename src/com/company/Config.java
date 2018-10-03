@@ -20,7 +20,7 @@ public class Config {
 
     //POINTS
     public static int Point_Coin = 10;
-    public static int Point_Junp = 30;
+    public static int Point_Jump = 30;
     public static int Point_Door = 300;
     public static int Point_Exit = 30;
 

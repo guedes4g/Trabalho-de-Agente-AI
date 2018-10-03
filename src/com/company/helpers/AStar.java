@@ -1,11 +1,15 @@
 package com.company.helpers;
 
+import com.company.Config;
+import com.company.models.Agent;
 import com.company.models.Element;
 import com.company.models.Position;
 
 import java.util.*;
 
 public class AStar {
+
+
 
     public static Stack<Position> run(Element start, Element to){
         ArrayList<Position> open = new ArrayList<>();
@@ -74,21 +78,18 @@ public class AStar {
         Stack<Position> result = new Stack<>();
         Position current = to;
 
-
-        int debug = 0;
         while (current != null && current != path.get(current)) {
-            debug++;
             Position previous = current;
             current = path.get(current);
             if (current != null){
                  totalPath.add(previous);
             }
-            if(debug >100){
-                System.out.println("HERE");
-            }
         }
         for(int p = 0; p < totalPath.size(); p++){
-            if(map.getElementAt(totalPath.get(p)).getType() == ElementType.hole) continue;
+            if(map.getElementAt(totalPath.get(p)).getType() == ElementType.hole) {
+                Agent.getInstance().addPoints(Config.Point_Jump);
+                continue;
+            }
             result.push(totalPath.get(p));
         }
 

@@ -1,7 +1,7 @@
 package com.company.helpers;
 
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.Map;
 
 import com.company.Config;
 import com.company.models.Bag;
@@ -12,20 +12,27 @@ public class Genetic {
 	private static final int NUMBER_OF_CHESTS = Config.NumberOfChests;
 	private static final int POPULATION_SIZE = 5;
 	private static final int MUTATION_PROBABILITY = 5;
+	private static final int CONVERGENCE_FACTOR = 4;
 	
 	public static int[] solution(List<Bag> bags) {
-		int numberOfBags = bags.size();
-		int[][] population = initialPopulation(numberOfBags);
-		int coinsPerChest = coinsPerChest(bags);
-		while(true) {
-			int[] fitnesses = fitnesses(bags, coinsPerChest, population);
-			int bestSolution = elitism(fitnesses);
-			if(fitnesses[bestSolution] == 0)
-				return population[bestSolution];
-			population = generatePopulation(population, fitnesses, bestSolution);
-			if(RANDOM.nextInt(100) < MUTATION_PROBABILITY)
-				mutation(population);
-		}
+	    boolean foundSolution = false;
+	    while (!foundSolution) {
+            int numberOfBags = bags.size();
+            int[][] population = initialPopulation(numberOfBags);
+            int coinsPerChest = coinsPerChest(bags);
+            while (true) {
+                int[] fitnesses = fitnesses(bags, coinsPerChest, population);
+                int bestSolution = elitism(fitnesses);
+                if (fitnesses[bestSolution] == 0)
+                    return population[bestSolution];
+                population = generatePopulation(population, fitnesses, bestSolution);
+                if (converged(population))
+                    break;
+                if (RANDOM.nextInt(100) < MUTATION_PROBABILITY)
+                    mutation(population);
+            }
+        }
+        return null;
 	}
 	
 	private static int[][] generatePopulation(int[][] population, int[] fitnesses, int bestSolution) {
@@ -132,5 +139,34 @@ public class Genetic {
 			totalNumOfCoins += bag.getValue();
 		return totalNumOfCoins/NUMBER_OF_CHESTS;
 	}
+
+	private static boolean converged(int[][] population) {
+		Map<String, Integer> solutions = new HashMap<>();
+		for (int[] solution : population) {
+		    String key = generateKey(solution);
+			Integer occurrences = solutions.get(key);
+			solutions.put(key, occurrences == null ? 1 : ++occurrences);
+		}
+		for(Integer occurrences: solutions.values()) {
+			if(occurrences == CONVERGENCE_FACTOR) {
+                return true;
+            }
+		}
+		return false;
+	}
+
+    /**
+     * Pseudo código nao otimizado para geraćão de chave de um array
+     * @param solution
+     * @return key (String)
+     */
+	private static String generateKey(int[] solution){
+	    StringBuilder key = new StringBuilder();
+        for (int i = 0; i < solution.length; i++) {
+            key.append(solution[i]);
+            key.append(';');
+        }
+        return key.toString();
+    }
 	
 }

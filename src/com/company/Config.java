@@ -3,10 +3,6 @@ package com.company;
 public class Config {
     public static boolean DEBUG = true;
 
-    // DEVE COLETAR 40 Moedas
-    public static int ShouldColect = 40;
-
-
     //MAP DIMENSIONS
     public static int MapX = 10;
     public static int MapY = 10;
@@ -24,4 +20,7 @@ public class Config {
     public static int Point_Door = 300;
     public static int Point_Exit = 30;
 
+    //EXECUTE SLOWER
+    public static boolean Should_Execute_Slower = false;
+    public static int timeout_ms = 500;
 }

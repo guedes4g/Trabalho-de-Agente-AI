@@ -32,6 +32,17 @@ public class Agent {
         chests = new HashSet<>();
     }
 
+    public void slowExecution(){
+        /*EXECUTAR DE FORMA MAIS LENTA*/
+        if(Config.Should_Execute_Slower) {
+            try {
+                Thread.sleep(Config.timeout_ms);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void addPoints(int p) {
         pontuacao += p;
     }
@@ -43,12 +54,7 @@ public class Agent {
     public void start(){
 
         while (true){
-            /*EXECUTAR DE FORMA MAIS LENTA*/
-//            try {
-//                Thread.sleep(500);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
+            slowExecution();
             System.out.println("\n\n\n\n\n\n");
             System.out.println(map);
 
@@ -149,6 +155,7 @@ public class Agent {
                 bags.add(map.catchBag(position));
             }
             if(Config.DEBUG) System.out.println("A* to " + position);
+            slowExecution();
             System.out.println(map);
         }
     }

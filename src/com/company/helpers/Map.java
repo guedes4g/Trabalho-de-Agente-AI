@@ -11,9 +11,9 @@ import java.util.Stack;
 
 public class Map {
     private static Map INSTANCE =  new Map();
-    private Element _map[][] = new Element[Config.MapX][Config.MapY];
-    private int freeSpace = Config.MapX * Config.MapY;
-    private boolean doorClosed = true;
+    private Element _map[][];
+    private int freeSpace;
+    private boolean doorClosed;
     private Position frontDoor;
     private boolean visited[][];
     private int total;
@@ -21,7 +21,14 @@ public class Map {
     private int doorPlacement;
 
     private Map(){
+        this._map = new Element[Config.MapX][Config.MapY];
+        freeSpace = Config.MapX * Config.MapY;
+        doorClosed = true;
         this.generateMap();
+    }
+
+    private void clearMap(){
+        this._map = new Element[Config.MapX][Config.MapY];
     }
 
     public static synchronized Map getInstance(){
@@ -78,8 +85,12 @@ public class Map {
     }
     private void generateMap() {
         random = new Random();
+        boolean didGenerate = false;
         try {
-            this.setDoorLocationAndWalls();
+            while(!didGenerate){
+                didGenerate = this.setDoorLocationAndWalls();
+                if(!didGenerate) clearMap();
+            }
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -118,7 +129,12 @@ public class Map {
         return false;
     }
 
-    private void setDoorLocationAndWalls() throws Exception {
+    /**
+     *
+     * @return retorna false se nao conseguiu gerar o mapa
+     * @throws Exception
+     */
+    private boolean setDoorLocationAndWalls() throws Exception {
         //Place Door
         doorPlacement = random.nextInt(4);
         switch (doorPlacement){
@@ -127,7 +143,7 @@ public class Map {
                 break;
 
             case 1:
-                createDoor(9, random.nextInt(10),true);
+                createDoor(Config.MapX-1, random.nextInt(10),true);
                 break;
 
             case 2:
@@ -135,7 +151,7 @@ public class Map {
                 break;
 
             case 3:
-                createDoor(random.nextInt(10), 9, false);
+                createDoor(random.nextInt(10), Config.MapY-1, false);
                 break;
         }
 
@@ -145,15 +161,19 @@ public class Map {
 
 
         int x,y;
+        int tentativas;
         boolean vertical;
         for (int i = 0; i < Config.NumberOfWalls ; i++) {
-            int maxX = Config.MapX/2;
-            int maxY = Config.MapY/2;
+            tentativas = 0;
+            int maxX = Config.MapX - Config.WallSize;
+            int maxY = Config.MapY - Config.WallSize;
 
             do {
+                tentativas++;
                 x = random.nextInt(maxX) + (doorPlacement == 0 ? 1 : 0);
                 y = random.nextInt(maxY) + (doorPlacement == 2 ? 1 : 0);
                 vertical = random.nextBoolean();
+                if(tentativas > 1000) return false;
             } while (this.willHaveConflict(x,y,vertical) || this.willGetStuck(x,y,vertical));
 
         }
@@ -166,16 +186,17 @@ public class Map {
             int[] pos = generateElement();
             _map[pos[0]][pos[1]] = new Bag(pos[0],pos[1], Config.BAG_VALUES[i]);
         }
+        return true;
     }
 
     private void createDoor(int x,int y, boolean fixed){
         if(fixed){
-            for(int i = 0; i < _map.length; i++){
+            for(int i = 0; i < _map[x].length; i++){
                 if(i == y) continue;
                 addElement(x, i, ElementType.wall);
             }
         } else {
-            for(int i = 0; i < _map[x].length; i++){
+            for(int i = 0; i < _map.length; i++){
                 if(i == x) continue;
                 addElement(i, y, ElementType.wall);
             }

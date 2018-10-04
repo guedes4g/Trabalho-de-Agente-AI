@@ -240,7 +240,6 @@ public class Agent {
             }
             System.out.println();
         }
-        System.exit(0);
 
     }
 

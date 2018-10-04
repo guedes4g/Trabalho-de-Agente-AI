@@ -217,6 +217,7 @@ public class Agent {
 
         // distribuir moedas A*
         HashMap<Chest, ArrayList<Bag>> solution = understandSolution(rawSolution );
+        printSolution(solution);
         for(Chest chest: solution.keySet()){
             addCoinsToChest(chest, solution.get(chest));
         }
@@ -227,6 +228,20 @@ public class Agent {
             this.estado = Estado.SAINDO_SALA;
 
         addPoints(Config.Point_Door);
+    }
+
+    private void printSolution(HashMap<Chest, ArrayList<Bag>> solution) {
+        System.out.println("Genetic Solution:");
+        int i = 0;
+        for (Chest chest: solution.keySet()) {
+            System.out.print("chest_" + (++i) + " =>  ");
+            for(Bag bag: solution.get(chest)){
+                System.out.print(bag.getValue() +" ;");
+            }
+            System.out.println();
+        }
+        System.exit(0);
+
     }
 
     private void addCoinsToChest(Chest chest, ArrayList<Bag> bags) {

@@ -21,6 +21,6 @@ public class Config {
     public static int Point_Exit = 30;
 
     //EXECUTE SLOWER
-    public static boolean Should_Execute_Slower = true;
+    public static boolean Should_Execute_Slower = false;
     public static int timeout_ms = 500;
 }

@@ -154,8 +154,13 @@ public class Agent {
                 System.out.println(map.getElementAt(position).getType());
                 bags.add(map.catchBag(position));
             }
-            if(Config.DEBUG) System.out.println("A* to " + position);
             slowExecution();
+
+            ArrayList<Element> elements = this.lookAround();
+            if(doorPosition == null) lookForDoor(elements);
+            if(!hasAllChests()) lookForChests(elements);
+
+            if(Config.DEBUG) System.out.println("A* to " + position);
             System.out.println(map);
         }
     }

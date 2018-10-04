@@ -59,25 +59,25 @@ public class Map {
         switch (doorPlacement){
             case 0:
                 do {
-                    valido = generateChest(1, random.nextInt(10));
+                    valido = generateChest(1, random.nextInt(Config.MapY));
                 } while(!valido);
                 break;
 
             case 1:
                 do {
-                    valido = generateChest(8, random.nextInt(10));
+                    valido = generateChest(Config.MapX-2, random.nextInt(Config.MapY));
                 } while(!valido);
                 break;
 
             case 2:
                 do {
-                    valido = generateChest(random.nextInt(10), 1);
+                    valido = generateChest(random.nextInt(Config.MapX), 1);
                 } while(!valido);
                 break;
 
             case 3:
                 do {
-                    valido = generateChest(random.nextInt(10), 8);
+                    valido = generateChest(random.nextInt(Config.MapX), Config.MapY-2);
                 } while(!valido);
                 break;
         }

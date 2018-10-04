@@ -14,7 +14,6 @@ public class Logic {
                 map.getFreePosition()
         );
         agent.start();
-        agent.getChests();
-        
+        System.out.println("Pontos " + agent.getPontuacao());
     }
 }
